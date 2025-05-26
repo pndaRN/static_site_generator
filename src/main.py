@@ -3,7 +3,7 @@ from textnode import *
 def main():
 
     text = "djsfla;kj"
-    text_type = TextType.NORMAL
+    text_type = TextType.TEXT
     url = "boot.dev"
 
     node = TextNode(text, text_type, url)

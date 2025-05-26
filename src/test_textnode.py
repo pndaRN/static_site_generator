@@ -19,7 +19,7 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node2, node4)
 
         node6 = TextNode("This is italics", TextType.ITALIC)
-        node7 = TextNode("This is not", TextType.NORMAL)
+        node7 = TextNode("This is not", TextType.TEXT)
 
         self.assertNotEqual(node6, node7)
 

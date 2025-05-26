@@ -51,7 +51,7 @@ class TestHtmlNode(unittest.TestCase):
         )
     def test_normal_text(self):
         """Test converting normal text node to HTML node."""
-        text_node = TextNode("Hello, world!", TextType.NORMAL) 
+        text_node = TextNode("Hello, world!", TextType.TEXT) 
         html_node = text_node_to_html_node(text_node)
         
         self.assertIsNone(html_node.tag)
