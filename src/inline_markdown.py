@@ -34,7 +34,7 @@ def split_nodes_image(old_nodes):
     new_nodes = []
     for old_node in old_nodes:
         if old_node.text_type != TextType.TEXT:
-            new_node.append(old_node)
+            new_nodes.append(old_node)
             continue
         original_text = old_node.text
         image = extract_markdown_images(original_text)
@@ -67,31 +67,24 @@ def split_nodes_link(old_nodes):
     new_nodes = []
     for old_node in old_nodes:
         if old_node.text_type != TextType.TEXT:
-            new_node.append(old_node)
-            continue
-        original_text = old_node.text
-        link= extract_markdown_links(original_text)
-
-        if not link:
             new_nodes.append(old_node)
             continue
-        
-        current_text = original_text
+        original_text = old_node.text
+        links= extract_markdown_links(original_text)
 
-        for alt_text, url in image:
-            link_md = f"![{alt_text}]({url})"
-            parts = current_text.split(link_md, 1)
-
-            if len(parts) == 2:
-                if parts[0]:
-                    new_nodes.append(TextNode(parts[0], TextType.TEXT))
-
-                new_nodes.append(TextNode(alt_text, TextType.IMAGE, url))
-                
-                current_text = parts[1]
-
-        if current_text:
-            new_nodes.append(TextNode(current_text, TextType.TEXT))
+        if len(links) == 0:
+            new_nodes.append(old_node)
+            continue
+        for link in links:
+            sections = original_text.split(f"[{link[0]}]({link[1]})", 1)
+            if len(sections) != 2:
+                raise ValueError("invalid markdown, link section not closed")
+            if sections[0] != "":
+                new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            new_nodes.append(TextNode(link[0], TextType.LINKS, link[1]))
+            original_text = sections[1]
+        if original_text != "":
+            new_nodes.append(TextNode(original_text, TextType.TEXT))
 
     return new_nodes
 
@@ -102,5 +95,5 @@ def text_to_textnodes(text):
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
-
+    return nodes
 
